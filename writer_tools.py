@@ -111,7 +111,7 @@ class WriterTools:
     def censoring(self):
         self.input_text()
         regex = FoulWords().create_regex()
-        
+
         if not regex:
             with open('regex.txt', 'r') as input_file:
                 regex = input_file.read()
