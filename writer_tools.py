@@ -1,4 +1,4 @@
-from FoulWords import FoulWords
+from foul_words import FoulWords
 from selenium import webdriver
 import time
 
@@ -9,12 +9,13 @@ class WriterTools:
         self.browser = None
         self.raw = None
 
+    # get text from user
     def input_text(self):
         print("Enter your text below: ")
         print()
         self.raw = str(input())
-        # self.raw = "I love, to eat, apples!"
 
+    # remove punctuation from the input text
     def process_text(self, text=None) -> str:
         if text is None:
             text = self.raw
@@ -30,6 +31,7 @@ class WriterTools:
 
         return final
 
+    # return word count of a text
     def word_count(self):
         self.input_text()
         words = self.raw.split(" ")
@@ -51,15 +53,16 @@ class WriterTools:
         print("ONLY TEXT: " + str(no_punc_no_space))
         print("\nNUMBER OF WORDS (PUNCTUATION EXCLUDED): " + str(len(words)))
 
+    # check the diff between two texts
     def compare_str(self):
         self.input_text()
         compare1 = self.process_text()
         print("Enter the text to compare with your text: ")
-        # compare2 = self.process_text("I love to eat apples")
+        print()
         compare2 = self.process_text(str(input()))
         i = 0
-        diff_raw = None
-        diff_compare = None
+        diff_raw = ""
+        diff_compare = ""
         count = 0
         while i < min(len(compare1), len(compare2)):
             if compare1[i] != compare2[i]:
@@ -72,9 +75,11 @@ class WriterTools:
 
         print("Uncompared Characters: " + str(abs(len(compare1) - len(compare2))))
         print("Total number of different characters: " + str(count) + "/" + str(min(len(compare1), len(compare2))))
-        print("In Your Text: " + str(diff_raw))
-        print("In The Compare Text: " + str(diff_compare))
+        if count > 0:
+            print("In Your Text: " + str(diff_raw))
+            print("In The Compare Text: " + str(diff_compare))
 
+    # check for plagiarism
     def plagiarism(self):
         self.input_text()
         self.browser = webdriver.Chrome()
@@ -91,32 +96,34 @@ class WriterTools:
             print(result.text)
         self.browser.close()
 
+    # censoring vulgar words from the text
     def censoring(self):
         self.input_text()
         regex = FoulWords().create_regex()
         print(regex.sub('#$%#$#$%$#', self.raw))
 
 
-print("WRTIER'S TOOL")
+if __name__ == '__main__':
+    print("WRTIER'S TOOL")
 
-menu = {
-    '1': 'WORD COUNT',
-    '2': 'TEXT COMPARISON',
-    '3': 'PLAGIARISM CHECK',
-    '4': 'CENSORING',
-}
+    menu = {
+        '1': 'WORD COUNT',
+        '2': 'TEXT COMPARISON',
+        '3': 'PLAGIARISM CHECK',
+        '4': 'CENSORING',
+    }
 
-for key in menu:
-    print(str(key) + ' ' + str(menu[key]))
+    for key in menu:
+        print(str(key) + ' ' + str(menu[key]))
 
-print("\nHello Writer!")
-option = int(input("What would you like to do?"))
-obj = WriterTools()
-if option == 1:
-    obj.word_count()
-elif option == 2:
-    obj.compare_str()
-elif option == 3:
-    obj.plagiarism()
-elif option == 4:
-    obj.censoring()
+    print("\nHello Writer!")
+    option = int(input("What would you like to do?"))
+    obj = WriterTools()
+    if option == 1:
+        obj.word_count()
+    elif option == 2:
+        obj.compare_str()
+    elif option == 3:
+        obj.plagiarism()
+    elif option == 4:
+        obj.censoring()
