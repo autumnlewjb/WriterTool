@@ -1,5 +1,9 @@
-from foul_words import FoulWords
+from selenium.webdriver.common.by import By
 from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from foul_words import FoulWords
 import time
 
 
@@ -81,25 +85,37 @@ class WriterTools:
 
     # check for plagiarism
     def plagiarism(self):
+        print('Your text must contains at least 30 characters!')
         self.input_text()
-        self.browser = webdriver.Chrome()
-        self.browser.get("http://plagiarisma.net/")
-        time.sleep(3)
-        text_box = self.browser.find_element_by_name("query")
-        text_box.send_keys(self.raw)
-        self.browser.find_element_by_xpath("//button[@name='Submit']").click()
-        print("This might take a while....")
-        time.sleep(15)
-        results = self.browser.find_elements_by_tag_name("p")
-        print("RESULTS: ")
-        for result in results:
-            print(result.text)
-        self.browser.close()
+        if len(self.raw) >= 30:
+            self.browser = webdriver.Chrome()
+            self.browser.get("http://plagiarisma.net/")
+            time.sleep(3)
+            text_box = self.browser.find_element_by_name("query")
+            text_box.send_keys(self.raw)
+            self.browser.find_element_by_xpath("//button[@name='Submit']").click()
+            print("This might take a while....")
+
+            wait = WebDriverWait(self.browser, 30)
+            wait.until(EC.presence_of_element_located((By.TAG_NAME, "p")))
+
+            results = self.browser.find_elements_by_tag_name("p")
+            print("RESULTS: ")
+            for result in results:
+                print(result.text)
+            self.browser.close()
+        else:
+            print('Your text has less than 30 character. Unable to initiate plagiarism check. ')
 
     # censoring vulgar words from the text
     def censoring(self):
         self.input_text()
         regex = FoulWords().create_regex()
+        
+        if not regex:
+            with open('regex.txt', 'r') as input_file:
+                regex = input_file.read()
+
         print(regex.sub('#$%#$#$%$#', self.raw))
 
 
