@@ -3,12 +3,12 @@ import io
 import base64
 
 def request_body():
-    feature = dict(type='DOCUMENT_TEXT_DETECTION', maxResults="", model="builtin/stable")
+    feature = dict(type='DOCUMENT_TEXT_DETECTION', maxResults="1", model="builtin/stable")
     feature_list = [feature]
     
 
-    with open('../resources/english.jpg', 'rb') as input_file:
-        content = str(base64.encodebytes(input_file.read()))
+    with open('resources/english.jpg', 'rb') as input_file:
+        content = base64.b64encode(input_file.read()).decode('ascii')
         print(type(content))
     
     image = dict(content=content)
@@ -20,8 +20,9 @@ def request_body():
 
 def make_request():
     endpoint = 'https://vision.googleapis.com/v1/images:annotate'
-    response = requests.post(endpoint, data=request_body())
+    response = requests.post(endpoint, json=request_body())
     print(response.status_code)
+    print(response.json())
 
 
 if __name__ == '__main__':
