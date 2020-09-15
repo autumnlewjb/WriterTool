@@ -130,3 +130,5 @@ dmypy.json
 
 # api-key
 resources/api.txt
+resources/output/
+*.jpg
